@@ -1,0 +1,170 @@
+import os
+import sys
+from numpy import array
+from numpy import zeros
+from random import randint
+from random import shuffle
+from numpy import nditer
+
+""" CLASE CASILLA PARA QUE CONTENGA LO QUE TENGO QUE MOSTRAR Y LO QUE OCULTO
+(* ANTES DE ADIVINAR )
+(NUMERO DESPUES DE ADIVINAR)
+"""
+class casilla:
+	def __init__(self,x,y,muestro,tengo):
+		self.x=x
+		self.y=y
+		self.muestro=muestro
+		self.tengo=tengo
+#NUMERO DE FILAS (matriz cuadrada)
+row = 3
+#NUMERO DE BOMBAS
+num_bomb = 5
+
+if(num_bomb>(row*row)-1):
+	print ("EL NUMERO DE CASILLAS NO PUEDE SER MAYOR QUE EL NUMERO DE BOMBAS")
+	sys.exit(1)
+	
+pise_bomba=False
+muestroTodo=False
+rep_bomb = '-'
+rep_casi = '*'
+rep_vacio= '.'
+#0 vacio
+#1 bomba
+def crea_arreglo():
+	array_ret=[]
+	for i in range(1,row+1):
+		for j in range(1,row+1):
+			c_tmp = casilla(i,j,rep_casi,0)
+			array_ret.append(c_tmp)
+	return array_ret
+	
+def llena_arreglo(arreglo):
+	numeros=[]
+	for i in range (0,(row*row)-1):
+		numeros.append(i)
+	shuffle(numeros)
+	aleat=numeros[0:num_bomb]
+	for i in aleat:
+		arreglo[i].tengo=1
+		
+		
+	return arreglo
+	
+
+	
+def pregunto(argv):
+	global muestroTodo #PARA VER LA SOLUCION
+	coor_xy=input(argv)		#VERIFICAR SI CORRE EN python 2 o 3
+	if(coor_xy=='q' or coor_xy=='Q'): 
+		sys.exit(0)
+	if(coor_xy=='c' or coor_xy=='c'): 
+		muestroTodo=not muestroTodo
+	#coord_xy=coor_xy.split(",") # SEPARO SI
+	x,x_y,y = coor_xy #x_y interpreta a bomba 
+	coord_xy=[]
+	coord_xy.append(x)
+	coord_xy.append(y)	
+	coord_xy.append(x_y)
+	
+	coord_xy[0]=int(coord_xy[0])
+	coord_xy[1]=int(coord_xy[1])
+	
+	if(not( 1<=coord_xy[0]<=row) ): 
+		raise Exception('X invalido')
+	if(not(1<=coord_xy[1]<=row)): 
+		raise Exception('Y invalido')
+	return coord_xy
+
+def comparo(arreglo, arr_xy):
+	global pise_bomba
+	
+	x = arr_xy[0]
+	y = arr_xy[1]
+	b = arr_xy[2]
+	print('b%s...'%b )
+	print(type(b))
+	print ('FILA: %d'%x )
+	print ('COLUMNA: %d'%y )
+	#'CONVERTIR' DE 2D A 1D
+	if(x==1):
+		posicion= ((x-1)*7) + ((y-1)) 
+	else:
+		posicion= ((x-1)*7) + ((y-1)) + (x-1)
+		
+	print('POSICION EN ARREGLO : %d '%posicion)
+
+	if(arreglo[posicion].tengo==1):
+		arreglo[posicion].muestro=rep_bomb
+		print('Entro aqui')
+		if (b=='b'): #Si encontre una bomba y  la indique
+			pise_bomba=False
+			#print('Entro aqui false')
+		else:
+			pise_bomba=True
+			#print('Entro aqui true')
+		return True
+	else:  #No hay BOMBAS
+		arreglo[posicion].muestro=arreglo[posicion].tengo
+		if(b=='b'): #Pongo que hay una bomba
+			pass
+		return False
+
+
+		
+def muestra_arreglo(arreglo):
+	print (str(pise_bomba))
+	if(pise_bomba):
+		print('\n\n------------PISASTE UNA B O M B A----------------')
+		print('Se acabo el juego')
+		sys.exit(1)
+		
+	print('%s=CASILLA SIN ACTIVAR'%rep_casi)
+	print('%s=BOMBA' %rep_bomb)
+	print('%s=NADA CERCA' %rep_vacio)
+	print('NUMERO=NUMERO CERCANO DE BOMBAS')
+	print('---------TENGO %d BOMBAS----------\n\n'%num_bomb)
+	print ('* PRESIONE q PARA SALIR')
+	
+	if(muestroTodo):
+		tmp_i=0
+		for i in arreglo:
+			if(tmp_i%row==0):
+				print('')
+			print (i.tengo, end='') #PARA QUE NO SE IMPRIMA SALTO DE LINEA
+			tmp_i=tmp_i+1
+		print ('')
+		
+	if(num_bomb>0 and not muestroTodo): 
+		tmp_i=0
+		for i in arreglo:
+			if(tmp_i%row==0):
+				print('')
+			print (i.muestro, end='') #PARA QUE NO SE IMPRIMA SALTO DE LINEA
+			tmp_i=tmp_i+1
+		print ('')
+	if (num_bomb==0 and not pise_bomba):
+		print ('------------------Ganaste---------------')
+		sys.exit(0)
+	if(num_bomb<0 or pise_bomba):
+		print('\n\n------------ACABO----------------')
+		print('\n---------------EL----------------')
+		print('\n------------JUEGO----------------')
+arreglo=crea_arreglo()
+arreglo_lleno = llena_arreglo(arreglo)
+
+
+while True:
+	try:
+		#os.system("cls")
+		muestra_arreglo(arreglo_lleno)
+		print('Si cree que hay una bomba digite b entre las coordenadas X Y')
+		arr_xy=pregunto("Digite (fila columna): ")
+		if(comparo(arreglo_lleno,arr_xy)): #SI ENCONTRE UNA MINA
+			num_bomb-=1
+		
+	except ValueError as ex1:
+		print ('No es VALIDO')
+	except Exception as ex2:
+		print ('FUERA DE RANGO: '+ repr(ex2))
