@@ -15,13 +15,13 @@ No cambiar el valor de tengo... Si se quiere 'mostrar' el numero de bombas cerca
 Metodos:
   * Crea_arreglo: Crea un arreglo de casillas
   * llena_arreglo: llena el atributo tengo de cada casilla
-  * pregunto: Pregunto el numero en X y en Y de la casilla que quiere activar 
-      Ve si las coordenadas X y Y estan correctamente validadas
-  * Comparo: Activo la casilla que piden
-      X[b|,|.]Y--> Si no digitan b y hay una bomba, pierden el juego
+  * pregunto: Pregunto el numero en X y en Y de la casilla que quiere activar. 
+     <b> Ve si las coordenadas X y Y estan correctamente validadas</b>
+  * Comparo: Activo la casilla que piden. 
+      <b>X[b|,|.]Y-> Si no digitan b y hay una bomba, pierden el juego</b>
   * Muestra_arreglo: Muestro las diferentes pantallas
-      Piso bomba
-      Indicaciones
-      Ganar...
-      Perder...
+      <b>Piso bomba</b>
+      <b>Indicaciones</b>
+      <b>Ganar...</b>
+      <b>Perder...</b>
       
