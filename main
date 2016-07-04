@@ -7,8 +7,13 @@ from random import shuffle
 from numpy import nditer
 
 """ CLASE CASILLA PARA QUE CONTENGA LO QUE TENGO QUE MOSTRAR Y LO QUE OCULTO
-(* ANTES DE ADIVINAR )
+(* ANTES DE ADIVINAR --muestro )
 (NUMERO DESPUES DE ADIVINAR)
+
+En muestro pongo * antes de activar la casilla
+en tengo pongo si es una bomba o not
+#0 vacio
+#1 bomba
 """
 class casilla:
 	def __init__(self,x,y,muestro,tengo):
@@ -42,9 +47,9 @@ def crea_arreglo():
 	
 def llena_arreglo(arreglo):
 	numeros=[]
-	for i in range (0,(row*row)-1):
+	for i in range (0,(row*row)-1): 
 		numeros.append(i)
-	shuffle(numeros)
+	shuffle(numeros) #shuffle los numeros y escojo los n priomeros para las bombas
 	aleat=numeros[0:num_bomb]
 	for i in aleat:
 		arreglo[i].tengo=1
