@@ -22,7 +22,7 @@ class casilla:
 		self.muestro=muestro
 		self.tengo=tengo
 #NUMERO DE FILAS (matriz cuadrada)
-row = 3
+row = 5
 #NUMERO DE BOMBAS
 num_bomb = 5
 
@@ -36,15 +36,21 @@ rep_bomb = '-'
 rep_casi = '*'
 rep_vacio= '.'
 #0 vacio
+vacio = 0
 #1 bomba
+bomba = 9
+
 def crea_arreglo():
 	array_ret=[]
 	for i in range(1,row+1):
 		for j in range(1,row+1):
-			c_tmp = casilla(i,j,rep_casi,0)
+			c_tmp = casilla(i,j,rep_casi,vacio)
 			array_ret.append(c_tmp)
 	return array_ret
 	
+	"""
+	LLENO ARREGLO CON BOMBAS ALEATORIOS
+	"""
 def llena_arreglo(arreglo):
 	numeros=[]
 	for i in range (0,(row*row)-1): 
@@ -52,19 +58,50 @@ def llena_arreglo(arreglo):
 	shuffle(numeros) #shuffle los numeros y escojo los n priomeros para las bombas
 	aleat=numeros[0:num_bomb]
 	for i in aleat:
-		arreglo[i].tengo=1
-		
-		
+		arreglo[i].tengo = bomba
+		#arreglo[i].muestro=rep_bomb
 	return arreglo
 	
-
+def es_borde(i):
+	global row
+	if(i%(row)==0 ): #EXTREMO IZQUIERDO
+		return True
+	if((i-row+1)%row==0): #EXTREMO DERECHO
+		return True
+	if(0<=i<row): #BORDE SUPERIOR
+		return True
+	if((row*row)-row<=i<=qrow*row-1): #BORDE INFERIOR
+		return True
+	else:
+		return False
+	"""
+	LLENO LOS VACIOS CON EL NUMERO DE BOMBAS CERCANAS
+	"""
+def llena_vacio_con_bombas(arreglo):
+	try:
+		for i in range(0,row*row):
+			arreglo[i].muestro=i
+			if(es_borde(i) ):
+				arreglo[i].muestro = 'S'
+			if(not (arreglo[i].tengo==bomba) and not es_borde(i)): #LLENO SIEMPRE QU ESTE EN UNA CASILLA VACIA
+				#LLENO SIEMPRE Y CUANDO NO ESTE EN LOS BORDES
+				if(arreglo[i-1].tengo==bomba):
+					arreglo[i].tengo=arreglo[i].tengo+1
+				if(arreglo[i+1].tengo==bomba):
+					arreglo[i].tengo=arreglo[i].tengo+1
+				if(arreglo[i+row].tengo==bomba):
+					arreglo[i].tengo=arreglo[i].tengo+1
+				if(arreglo[i-row].tengo==bomba):
+					arreglo[i].tengo=arreglo[i].tengo+1
+	except Exception as ex1:
+		print (ex1)
 	
 def pregunto(argv):
 	global muestroTodo #PARA VER LA SOLUCION
 	coor_xy=input(argv)		#VERIFICAR SI CORRE EN python 2 o 3
 	if(coor_xy=='q' or coor_xy=='Q'): 
 		sys.exit(0)
-	if(coor_xy=='c' or coor_xy=='c'): 
+	if(coor_xy=='c' or coor_xy=='C'): 
 		muestroTodo=not muestroTodo
 	#coord_xy=coor_xy.split(",") # SEPARO SI
 	x,x_y,y = coor_xy #x_y interpreta a bomba 
@@ -89,7 +126,7 @@ def comparo(arreglo, arr_xy):
 	y = arr_xy[1]
 	b = arr_xy[2]
 	print('b%s...'%b )
-	print(type(b))
+	#print(type(b))
 	print ('FILA: %d'%x )
 	print ('COLUMNA: %d'%y )
 	#'CONVERTIR' DE 2D A 1D
@@ -99,12 +136,12 @@ def comparo(arreglo, arr_xy):
 	else:
 		posicion= ((x-1)*7) + ((y-1)) + (x-1)
 	"""
-	posicion = (x-1)*row+(y-1)
+	posicion = (x-1)*row+(y-1)	
 	print('POSICION EN ARREGLO : %d '%posicion)
 
-	if(arreglo[posicion].tengo==1):
-		arreglo[posicion].muestro=rep_bomb
-		print('Entro aqui')
+	if(arreglo[posicion].tengo==bomba):
+		#arreglo[posicion].muestro=rep_bomb
+		#print('Entro aqui')
 		if (b=='b'): #Si encontre una bomba y  la indique
 			pise_bomba=False
 			#print('Entro aqui false')
@@ -160,6 +197,7 @@ def muestra_arreglo(arreglo):
 		print('\n------------JUEGO----------------')
 arreglo=crea_arreglo()
 arreglo_lleno = llena_arreglo(arreglo)
+llena_vacio_con_bombas(arreglo_lleno)
 
 
 while True:
