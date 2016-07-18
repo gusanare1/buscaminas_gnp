@@ -93,11 +93,13 @@ def comparo(arreglo, arr_xy):
 	print ('FILA: %d'%x )
 	print ('COLUMNA: %d'%y )
 	#'CONVERTIR' DE 2D A 1D
+	"""
 	if(x==1):
 		posicion= ((x-1)*7) + ((y-1)) 
 	else:
 		posicion= ((x-1)*7) + ((y-1)) + (x-1)
-		
+	"""
+	posicion = (x-1)*row+(y-1)
 	print('POSICION EN ARREGLO : %d '%posicion)
 
 	if(arreglo[posicion].tengo==1):
